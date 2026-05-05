@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to Notes Manager">
+  <title>Login - Notes Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Specific styles for the login page */
+    body.login-body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #0f172a;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated Background Orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      animation: float 10s infinite ease-in-out alternate;
+    }
+    .orb-1 {
+      width: 400px; height: 400px;
+      background: var(--accent);
+      top: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 500px; height: 500px;
+      background: #8b5cf6;
+      bottom: -150px; right: -100px;
+      animation-delay: -3s;
+    }
+    .orb-3 {
+      width: 300px; height: 300px;
+      background: #10b981;
+      top: 30%; left: 40%;
+      animation-delay: -6s;
+      opacity: 0.4;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 50px) scale(1.1); }
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(30, 41, 59, 0.4);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-left: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      text-align: center;
+      color: #fff;
+    }
+
+    .login-brand {
+      margin-bottom: 32px;
+    }
+    .login-brand .brand-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), #8b5cf6);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 700; color: #fff;
+      box-shadow: 0 8px 24px var(--accent-glow);
+      margin-bottom: 16px;
+    }
+    .login-brand h1 {
+      font-size: 1.8rem; font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+    .login-brand p {
+      font-size: 0.9rem; color: #94a3b8; margin-top: 8px;
+    }
+
+    .login-form {
+      display: flex; flex-direction: column; gap: 20px; text-align: left;
+    }
+    .form-group label {
+      display: block; font-size: 0.8rem; font-weight: 600;
+      color: #cbd5e1; margin-bottom: 8px; text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .login-input {
+      width: 100%; padding: 14px 16px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px; font-size: 0.95rem; font-family: inherit;
+      color: #fff; outline: none; transition: all 0.3s ease;
+    }
+    .login-input:focus {
+      border-color: var(--accent);
+      background: rgba(15, 23, 42, 0.8);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+
+    .login-btn {
+      width: 100%; padding: 14px;
+      border-radius: 12px; font-size: 1rem; font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), #6366f1);
+      color: #fff; border: none; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+      transition: all 0.3s ease; text-decoration: none;
+      display: inline-block; text-align: center; margin-top: 8px;
+      font-family: inherit;
+    }
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6);
+    }
+    
+    .login-footer {
+      margin-top: 32px; font-size: 0.85rem; color: #64748b;
+    }
+    .login-footer a {
+      color: var(--accent); text-decoration: none; font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .login-footer a:hover { color: #8b5cf6; }
+  </style>
+</head>
+<body class="login-body">
+
+  <!-- Background Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Login Form Container -->
+  <div class="login-container">
+    <div class="login-brand">
+      <div class="brand-icon">N</div>
+      <h1>Welcome Back</h1>
+      <p>Log in to access your notes</p>
+    </div>
+
+    <form class="login-form" action="dashboard.html" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="login-input" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" class="login-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="login-btn">Sign In <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></button>
+    </form>
+
+    <div class="login-footer">
+      Don't have an account? <a href="#">Create one</a>
+    </div>
+  </div>
+
+</body>
+</html>

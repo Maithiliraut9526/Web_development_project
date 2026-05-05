@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A modern, glassmorphic Notes Manager application built with pure HTML and CSS.">
+  <title>Notes Manager — Organize Your Thoughts</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<!-- ===== STATE TOGGLES (Checkbox Hack) ===== -->
+<input type="checkbox" id="dark-toggle" class="state-toggle">
+<input type="checkbox" id="modal-toggle" class="state-toggle">
+<input type="checkbox" id="delete-toggle" class="state-toggle">
+<input type="checkbox" id="sidebar-toggle" class="state-toggle">
+<input type="checkbox" id="note-saved" class="state-toggle"> <!-- New: Tracks if a note was 'saved' -->
+<input type="checkbox" id="toast-toggle" class="state-toggle">
+
+<!-- Pure CSS Modals for Card 1 & 2 -->
+<input type="checkbox" id="view-card-1" class="state-toggle">
+<input type="checkbox" id="edit-card-1" class="state-toggle">
+<input type="checkbox" id="view-card-2" class="state-toggle">
+<input type="checkbox" id="note-saved-work" class="state-toggle"> <!-- New: Simulated Work Note -->
+
+
+<!-- Filter radios -->
+<input type="radio" name="filter" id="filter-all" class="state-toggle" checked>
+<input type="radio" name="filter" id="filter-work" class="state-toggle">
+<input type="radio" name="filter" id="filter-personal" class="state-toggle">
+<input type="radio" name="filter" id="filter-ideas" class="state-toggle">
+<input type="radio" name="filter" id="filter-urgent" class="state-toggle">
+
+<!-- ===== APP WRAPPER ===== -->
+<div class="app-wrapper">
+
+  <!-- Mobile sidebar backdrop -->
+  <label for="sidebar-toggle" class="sidebar-backdrop"></label>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">N</div>
+      <h1>Notes</h1>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Menu</div>
+      <label for="filter-all" class="sidebar-link active">
+        <span class="link-icon"><i class="fas fa-layer-group"></i></span>
+        All Notes
+        <span class="note-count">8</span>
+      </label>
+      <a href="#" class="sidebar-link">
+        <span class="link-icon"><i class="fas fa-star"></i></span>
+        Favorites
+        <span class="note-count">3</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="link-icon"><i class="fas fa-archive"></i></span>
+        Archived
+        <span class="note-count">5</span>
+      </a>
+      <a href="#" class="sidebar-link">
+        <span class="link-icon"><i class="fas fa-trash-alt"></i></span>
+        Trash
+      </a>
+    </div>
+
+    <!-- Tags -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Tags</div>
+      <label for="filter-work" class="sidebar-link">
+        <span class="tag-dot work"></span>
+        Work
+        <span class="note-count">3</span>
+      </label>
+      <label for="filter-personal" class="sidebar-link">
+        <span class="tag-dot personal"></span>
+        Personal
+        <span class="note-count">2</span>
+      </label>
+      <label for="filter-ideas" class="sidebar-link">
+        <span class="tag-dot ideas"></span>
+        Ideas
+        <span class="note-count">2</span>
+      </label>
+      <label for="filter-urgent" class="sidebar-link">
+        <span class="tag-dot urgent"></span>
+        Urgent
+        <span class="note-count">1</span>
+      </label>
+    </div>
+
+    <!-- Pinned Notes -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Pinned</div>
+      <div class="pinned-item">
+        <span class="pin-icon"><i class="fas fa-thumbtack"></i></span>
+        Sprint Planning Q2
+      </div>
+      <div class="pinned-item">
+        <span class="pin-icon"><i class="fas fa-thumbtack"></i></span>
+        Budget Overview
+      </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle-wrapper">
+      <label for="dark-toggle" class="theme-toggle-label">
+        <span class="link-icon"><i class="fas fa-moon"></i></span>
+        Dark Mode
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main-content">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <label for="sidebar-toggle" class="hamburger-label">
+        <i class="fas fa-bars"></i>
+      </label>
+
+      <div class="search-wrapper">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" class="search-input" id="search-bar" placeholder="Search notes, tags, or keywords…">
+      </div>
+
+      <div class="topbar-actions">
+        <label for="modal-toggle" class="new-note-label">
+          <span class="plus-icon">+</span>
+          New Note
+        </label>
+      </div>
+    </header>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <label for="filter-all" class="filter-label">
+        <i class="fas fa-th-large"></i> All
+      </label>
+      <label for="filter-work" class="filter-label">
+        <span class="tag-dot work"></span> Work
+      </label>
+      <label for="filter-personal" class="filter-label">
+        <span class="tag-dot personal"></span> Personal
+      </label>
+      <label for="filter-ideas" class="filter-label">
+        <span class="tag-dot ideas"></span> Ideas
+      </label>
+      <label for="filter-urgent" class="filter-label">
+        <span class="tag-dot urgent"></span> Urgent
+      </label>
+    </div>
+
+    <!-- ===== MASONRY NOTES GRID ===== -->
+    <section class="notes-grid" id="notes-grid">
+
+      <!-- Card 1: Work -->
+      <article class="note-card tag-work">
+        <label for="view-card-1" style="position:absolute; inset:0; z-index:1; cursor:pointer;"></label>
+        <div class="note-header" style="position:relative; z-index:2; pointer-events:none;">
+          <h3 class="note-title">Sprint Planning — Q2 Roadmap</h3>
+          <span class="note-pin"><i class="fas fa-thumbtack"></i></span>
+        </div>
+        <p class="note-snippet" style="position:relative; z-index:2; pointer-events:none;">
+          Finalize feature priorities for the upcoming quarter. Coordinate with design and engineering leads to align on delivery timelines and resource allocation for the new dashboard module.
+        </p>
+        <div class="note-footer" style="position:relative; z-index:2;">
+          <div class="note-meta">
+            <span class="note-tag work"><i class="fas fa-circle" style="font-size:6px"></i> Work</span>
+            <span class="note-date">Edited 2 mins ago</span>
+          </div>
+          <div class="note-actions">
+            <label for="edit-card-1" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- SIMULATED NEW NOTE (Hidden by default) -->
+      <article class="note-card tag-ideas simulated-new-note">
+        <div class="note-header">
+          <h3 class="note-title">New Note: Project Idea</h3>
+          <span class="note-tag ideas" style="padding: 2px 6px; font-size: 0.6rem; margin-left: 8px;">NEW</span>
+        </div>
+        <p class="note-snippet">
+          This note appeared because you clicked "Save Note"! In a real app, this would show the text you just typed. Since we are using pure HTML/CSS, I've pre-filled this as a simulation.
+        </p>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag ideas"><i class="fas fa-circle" style="font-size:6px"></i> Ideas</span>
+            <span class="note-date">Just now</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- SIMULATED NEW WORK NOTE (Hidden by default) -->
+      <article class="note-card tag-work simulated-work-note">
+        <div class="note-header">
+          <h3 class="note-title">New Work Note: Client Feedback</h3>
+          <span class="note-tag work" style="padding: 2px 6px; font-size: 0.6rem; margin-left: 8px;">NEW</span>
+        </div>
+        <p class="note-snippet">
+          Added to the Work section! This simulates how a note would appear in its specific category after being saved.
+        </p>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag work"><i class="fas fa-circle" style="font-size:6px"></i> Work</span>
+            <span class="note-date">Just now</span>
+          </div>
+          <div class="note-actions">
+            <label for="edit-card-1" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Personal (Checklist Format) -->
+      <article class="note-card tag-personal">
+        <label for="view-card-2" style="position:absolute; inset:0; z-index:1; cursor:pointer;"></label>
+        <div class="note-header" style="position:relative; z-index:2; pointer-events:none;">
+          <h3 class="note-title">Weekend Getaway Packing List</h3>
+        </div>
+        <ul class="note-checklist" style="position:relative; z-index:2; pointer-events:none;">
+          <li class="done">
+            <span class="check-box">✓</span> Book train tickets
+          </li>
+          <li class="done">
+            <span class="check-box">✓</span> Pack hiking boots
+          </li>
+          <li>
+            <span class="check-box"></span> Charge camera battery
+          </li>
+          <li>
+            <span class="check-box"></span> Download offline maps
+          </li>
+        </ul>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag personal"><i class="fas fa-circle" style="font-size:6px"></i> Personal</span>
+            <span class="note-date">Yesterday</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Ideas (Image Format) -->
+      <article class="note-card tag-ideas card-image">
+        <!-- Generative placeholder image -->
+        <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&q=80&w=400&h=200" alt="Greenery" class="card-cover">
+        
+        <div class="card-content-inner">
+          <div class="note-header">
+            <h3 class="note-title">Mobile App Concept: GreenTrack</h3>
+          </div>
+          <p class="note-snippet">
+            An app that gamifies sustainable living. Users log eco-friendly actions daily and earn community points. Features include carbon footprint tracking, challenges, and a marketplace for eco-products.
+          </p>
+          <div class="note-footer">
+            <div class="note-meta">
+              <span class="note-tag ideas"><i class="fas fa-circle" style="font-size:6px"></i> Ideas</span>
+              <span class="note-date">May 3, 2026</span>
+            </div>
+            <div class="note-actions">
+              <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+              <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+              <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Urgent (Highlight Format) -->
+      <article class="note-card tag-urgent card-highlight">
+        <div class="note-header">
+          <h3 class="note-title">⚠️ Server Migration Deadline</h3>
+        </div>
+        <p class="note-snippet">
+          Critical: All production services must be migrated to the new cluster by May 10th. Ensure backup verification is completed and run load tests before the final cutover window.
+        </p>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag urgent"><i class="fas fa-circle" style="font-size:6px"></i> Urgent</span>
+            <span class="note-date">3 hours ago</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Work -->
+      <article class="note-card tag-work">
+        <div class="note-header">
+          <h3 class="note-title">Design System — Color Tokens</h3>
+        </div>
+        <p class="note-snippet">
+          Document all brand color tokens with semantic naming. Primary: Electric Blue #3B82F6. Secondary: Indigo #6366F1. Surface colors use HSL with varying lightness for depth hierarchy.
+        </p>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag work"><i class="fas fa-circle" style="font-size:6px"></i> Work</span>
+            <span class="note-date">May 1, 2026</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6: Personal -->
+      <article class="note-card tag-personal">
+        <div class="note-header">
+          <h3 class="note-title">Book Recommendations 📚</h3>
+        </div>
+        <p class="note-snippet">
+          1. "Atomic Habits" by James Clear — habit stacking framework. 2. "Deep Work" by Cal Newport — focused productivity. 3. "The Design of Everyday Things" — interaction design principles.
+        </p>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag personal"><i class="fas fa-circle" style="font-size:6px"></i> Personal</span>
+            <span class="note-date">Apr 28, 2026</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 7: Ideas -->
+      <article class="note-card tag-ideas">
+        <div class="note-header">
+          <h3 class="note-title">AI-Powered Study Planner</h3>
+        </div>
+        <p class="note-snippet">
+          Build a web tool that uses spaced repetition algorithms to create personalized study schedules. Integrate with calendar APIs for automatic time-blocking. Target audience: college students.
+        </p>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag ideas"><i class="fas fa-circle" style="font-size:6px"></i> Ideas</span>
+            <span class="note-date">Apr 25, 2026</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 8: Work -->
+      <article class="note-card tag-work">
+        <div class="note-header">
+          <h3 class="note-title">Budget Overview — May 2026</h3>
+          <span class="note-pin"><i class="fas fa-thumbtack"></i></span>
+        </div>
+        <ul class="note-checklist">
+          <li class="done">
+            <span class="check-box">✓</span> Cloud hosting: ₹12,500
+          </li>
+          <li class="done">
+            <span class="check-box">✓</span> SaaS subscriptions: ₹8,200
+          </li>
+          <li>
+            <span class="check-box"></span> Marketing spend: TBD
+          </li>
+        </ul>
+        <div class="note-footer">
+          <div class="note-meta">
+            <span class="note-tag work"><i class="fas fa-circle" style="font-size:6px"></i> Work</span>
+            <span class="note-date">Today</span>
+          </div>
+          <div class="note-actions">
+            <label for="modal-toggle" class="note-action-btn" title="Edit"><i class="fas fa-pen"></i></label>
+            <a href="#" class="note-action-btn" title="Download"><i class="fas fa-download"></i></a>
+            <label for="delete-toggle" class="note-action-btn delete" title="Delete"><i class="fas fa-trash-alt"></i></label>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </div>
+
+  <!-- ===== NEW NOTE MODAL ===== -->
+  <div class="modal-overlay">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2>✏️ Create New Note</h2>
+        <label for="modal-toggle" class="modal-close">✕</label>
+      </div>
+
+      <div class="modal-field">
+        <label for="note-title-input">Title</label>
+        <input type="text" class="modal-input" id="note-title-input" placeholder="Give your note a title…">
+      </div>
+
+      <div class="modal-field">
+        <label for="note-content-input">Content</label>
+        <textarea class="modal-textarea" id="note-content-input" placeholder="Start writing your note here…"></textarea>
+      </div>
+
+      <div class="modal-field">
+        <label>Tag</label>
+        <div class="modal-tag-select">
+          <span class="modal-tag-option">🟡 Work</span>
+          <span class="modal-tag-option">🟣 Personal</span>
+          <span class="modal-tag-option">🟢 Ideas</span>
+          <span class="modal-tag-option">🔴 Urgent</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <label for="modal-toggle" class="btn btn-ghost">Cancel</label>
+        <!-- Simulation: Clicking Save triggers both Personal and Work simulated notes -->
+        <label for="note-saved" class="btn btn-primary" onclick="document.getElementById('modal-toggle').checked = false; document.getElementById('note-saved-work').checked = true;">
+          <i class="fas fa-save"></i> Save Note
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DELETE CONFIRMATION MODAL ===== -->
+  <div class="delete-overlay">
+    <div class="delete-panel">
+      <div class="delete-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3>Delete this note?</h3>
+      <p>This action cannot be undone. The note will be permanently removed from your collection.</p>
+      <div class="delete-actions">
+        <label for="delete-toggle" class="btn btn-ghost">Cancel</label>
+        <label for="delete-toggle" class="btn-danger">
+          <i class="fas fa-trash-alt"></i> Delete
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST NOTIFICATION ===== -->
+  <div class="toast">
+    <div class="toast-icon"><i class="fas fa-check"></i></div>
+    Note saved successfully!
+  </div>
+
+  <!-- ===== PURE CSS: VIEW MODAL FOR CARD 1 ===== -->
+  <div class="modal-overlay view-modal-1">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2>📄 View Note</h2>
+        <label for="view-card-1" class="modal-close">✕</label>
+      </div>
+      <h3 style="margin-bottom: 16px;">Sprint Planning — Q2 Roadmap</h3>
+      <p style="color: var(--text-secondary); line-height: 1.6;">Finalize feature priorities for the upcoming quarter. Coordinate with design and engineering leads to align on delivery timelines and resource allocation for the new dashboard module.</p>
+      <div class="modal-actions">
+        <label for="view-card-1" class="btn btn-ghost">Close</label>
+        <label for="edit-card-1" class="btn btn-primary" onclick="document.getElementById('view-card-1').checked=false">
+          <i class="fas fa-pen"></i> Edit
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PURE CSS: EDIT MODAL FOR CARD 1 ===== -->
+  <div class="modal-overlay edit-modal-1">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2>✏️ Edit Note</h2>
+        <label for="edit-card-1" class="modal-close">✕</label>
+      </div>
+      <div class="modal-field">
+        <label>Title</label>
+        <input type="text" class="modal-input" value="Sprint Planning — Q2 Roadmap">
+      </div>
+      <div class="modal-field">
+        <label>Content</label>
+        <textarea class="modal-textarea">Finalize feature priorities for the upcoming quarter. Coordinate with design and engineering leads to align on delivery timelines and resource allocation for the new dashboard module.</textarea>
+      </div>
+      <div class="modal-actions">
+        <label for="edit-card-1" class="btn btn-ghost">Cancel</label>
+        <label for="toast-toggle" class="btn btn-primary" onclick="document.getElementById('edit-card-1').checked=false">
+          <i class="fas fa-save"></i> Save Changes
+        </label>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ===== PURE CSS: VIEW MODAL FOR CARD 2 (Checklist) ===== -->
+  <div class="modal-overlay view-modal-2">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <h2>📄 View Checklist</h2>
+        <label for="view-card-2" class="modal-close">✕</label>
+      </div>
+      <h3 style="margin-bottom: 16px;">Weekend Getaway Packing List</h3>
+      <ul class="note-checklist" style="background: var(--bg-primary); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        <li class="done"><span class="check-box">✓</span> Book train tickets</li>
+        <li class="done"><span class="check-box">✓</span> Pack hiking boots</li>
+        <li><span class="check-box"></span> Charge camera battery</li>
+        <li><span class="check-box"></span> Download offline maps</li>
+      </ul>
+      <div class="modal-actions">
+        <label for="view-card-2" class="btn btn-ghost">Close</label>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end app-wrapper -->
+</body>
+</html>
